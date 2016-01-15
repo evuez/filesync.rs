@@ -1,0 +1,14 @@
+[package]
+name = "filesync"
+version = "0.1.0"
+authors = ["evuez"]
+
+[dependencies]
+notify = "2.5.3"
+time = "0.1"
+websocket = "*"
+hyper = "*"
+chan = "*"
+handlebars = "*"
+rustc-serialize = "*"
+walkdir = "*"

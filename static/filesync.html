@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"></head>
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+
+  <body>
+    <style>
+    body {
+      margin: 0;
+    }
+    nav, pre {
+      margin: 0;
+    }
+    nav {
+      display: inline-block;
+      width: 140px;
+      height: 100vh;
+      font-size: 11px;
+      font-family: sans-serif;
+    }
+    nav > ul {
+      list-style: none;
+      padding: 0 0 0 10px;
+    }
+    nav > ul > li.updated { color: green; }
+    nav > ul > li.deleted { color: red; }
+    nav > ul > li.created { color: blue; }
+    pre {
+      display: inline-block;
+      width: calc(100% - 140px);
+      height: 100vh;
+      vertical-align: top;
+      background-color: #f0f0f0
+    }
+    </style>
+
+
+    <nav>
+      <ul id="tree"></ul>
+    </nav><pre><code id="code"></code></pre>
+
+
+    <script>
+    var socket = new WebSocket('ws://{{websocket_addr}}');
+
+    var updateTree = function(tree) {
+      var parent = document.querySelector('#tree');
+
+      while (parent.hasChildNodes()) {
+        parent.removeChild(parent.lastChild);
+      }
+
+      tree.forEach(function (file) {
+        var node = document.createElement('li');
+        node.appendChild(document.createTextNode(file));
+        parent.appendChild(node);
+      });
+    }
+
+    var updateCode = function(code) {
+      var node = document.querySelector('#code');
+      node.textContent = code;
+      hljs.highlightBlock(node);
+    }
+
+
+    socket.onmessage = function (e) {
+      var data = JSON.parse(e.data);
+      updateTree(data.tree);
+      updateCode(data.code);
+    };
+
+    window.onhashchange = function(){
+      var selectedFile = window.location.hash.substr(1);
+      console.log(selectedFile);
+
+    }
+    </script>
+  </body>
+</html>
